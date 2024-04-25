@@ -1,10 +1,15 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import string
 import random
-from flask_cors import CORS
+import os
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable CORS
+
+# Get the base URL from the environment variable
+BASE_URL = os.environ.get('BASE_URL', 'https://flaskdb-mt6w.onrender.com/')
+
 # In-memory data structure to store URL mappings
 url_mappings = {}
 
@@ -20,7 +25,8 @@ def shorten_url():
     long_url = request.json['longUrl']
     short_url = generate_short_url()
     url_mappings[short_url] = long_url
-    return jsonify({'shortUrl': f'http://localhost:5000/{short_url}'}), 201
+    short_url_with_base = f'{BASE_URL}/{short_url}'
+    return jsonify({'shortUrl': short_url_with_base}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
